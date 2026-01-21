@@ -1,7 +1,7 @@
-﻿flask
-flask-sqlalchemy
-flask-login
-flask-bcrypt
+Flask
+Flask-SQLAlchemy
+Flask-Login
+Flask-Bcrypt
 pandas
 openpyxl
 psycopg2-binary
