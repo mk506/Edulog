@@ -1,0 +1,55 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="glass-panel">
+    <h2>👥 Team & Structure</h2>
+    
+    <div class="grid-2">
+        <form method="POST" action="{{ url_for('manage_staff') }}" style="background:rgba(0,0,0,0.05); padding:15px; border-radius:10px;">
+            <h3>Add User</h3>
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="text" name="password" placeholder="Password">
+            <input type="text" name="fullname" placeholder="Full Name" required>
+            <select name="department" required>
+                <option value="" disabled selected>Select Department...</option>
+                {% for d in depts %}<option value="{{ d.name }}">{{ d.name }}</option>{% endfor %}
+            </select>
+            <input type="text" name="designation" placeholder="Designation" required>
+            <select name="role" required>
+                <option value="Employee">Employee</option><option value="Leader">Leader</option><option value="Admin">Admin</option>
+            </select>
+            <button type="submit" class="submit-btn">Add User</button>
+        </form>
+
+        <form method="POST" action="{{ url_for('add_department') }}" style="background:rgba(0,0,0,0.05); padding:15px; border-radius:10px; height:fit-content;">
+            <h3>🏢 Add New Department</h3>
+            <p style="font-size:0.8rem; opacity:0.7;">Create a new department to categorize users.</p>
+            <input type="text" name="dept_name" placeholder="Department Name (e.g. R&D)" required>
+            <button type="submit" class="submit-btn" style="background:#00e676; color:black;">+ Create Department</button>
+        </form>
+    </div>
+
+    <table class="data-table">
+        <thead><tr><th>Name</th><th>Role</th><th>Dept</th><th>Action</th></tr></thead>
+        <tbody>
+            {% for s in staff %}
+            <tr>
+                <form action="{{ url_for('edit_user', id=s.id) }}" method="POST">
+                <td><input type="text" name="fullname" value="{{ s.full_name }}" style="border:none; background:transparent;"></td>
+                <td><select name="role"><option value="{{ s.role }}">{{ s.role }}</option><option value="Admin">Admin</option><option value="Leader">Leader</option><option value="Employee">Employee</option></select></td>
+                <td>
+                    <select name="department">
+                        <option value="{{ s.department }}">{{ s.department }}</option>
+                        {% for d in depts %}<option value="{{ d.name }}">{{ d.name }}</option>{% endfor %}
+                    </select>
+                </td>
+                <td>
+                    <button type="submit" class="btn-sm" style="background:#2196f3;">💾</button>
+                    <button type="submit" formaction="{{ url_for('delete_user', id=s.id) }}" class="btn-sm" style="background:#ff5252;">X</button>
+                </td>
+                </form>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,124 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+
+<div class="dashboard-header">
+    <h2>🚀 Executive Command Center</h2>
+</div>
+
+<div class="grid-2">
+
+    <!-- Meeting Analytics -->
+    <div class="glass-panel executive-panel">
+        <h3 style="margin:0;">📊 View Meeting Analytics</h3>
+        <p style="margin:5px 0 15px 0; opacity:0.8;">
+            Logs, Attendance, Department Performance
+        </p>
+        <a href="{{ url_for('meeting_analytics') }}"
+           class="submit-btn analytics-btn">
+            Open Meeting Hub
+        </a>
+    </div>
+
+    <!-- Task Stats -->
+    <div class="glass-panel">
+        <h3>⚡ Task Stats</h3>
+
+        <div class="stats-row">
+            <div class="stat-box">
+                <h2>{{ stats.total }}</h2>
+                <small>Total Tasks</small>
+            </div>
+
+            <div class="stat-box pending-text">
+                <h2>{{ stats.pending }}</h2>
+                <small>Pending</small>
+            </div>
+
+            <div class="stat-box">
+                <h2>{{ stats.completed }}</h2>
+                <small>Completed</small>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Global Task Monitor -->
+<div class="glass-panel">
+    <h3>🌍 Global Task Monitor</h3>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Assigned By</th>
+                <th>Assigned To</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for t in tasks %}
+            <tr>
+                <td>{{ t.title }}</td>
+                <td>{{ t.assigner }}</td>
+                <td>{{ t.assignee }}</td>
+                <td>
+                    {% if t.status == 'Completed' %}
+                        <span class="status-badge status-completed">
+                            {{ t.status }}
+                        </span>
+                    {% else %}
+                        <span class="status-badge status-pending">
+                            {{ t.status }}
+                        </span>
+                    {% endif %}
+                </td>
+                <td>
+                    <form action="{{ url_for('delete_task', id=t.id) }}" method="POST">
+                        <button type="submit"
+                                class="btn-sm delete-btn"
+                                onclick="return confirm('Delete Task?');">
+                            🗑️
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5">No active tasks.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Direct Task Assignment -->
+<div class="glass-panel">
+    <h3>📝 Direct Task Assignment</h3>
+
+    <form action="{{ url_for('assign_task') }}"
+          method="POST"
+          class="assign-form">
+
+        <input type="text" name="title" placeholder="Task Title..." required>
+
+        <select name="assignee">
+            {% for s in staff %}
+            <option value="{{ s.username }}">
+                {{ s.full_name }} ({{ s.department }})
+            </option>
+            {% endfor %}
+        </select>
+
+        <input type="date" name="deadline" required>
+
+        <button type="submit" class="submit-btn">
+            Assign
+        </button>
+    </form>
+</div>
+
+{% endblock %}

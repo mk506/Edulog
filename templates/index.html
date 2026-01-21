@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>EduLog</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+
+<body style="display:flex;align-items:center;justify-content:center;height:100vh;background:#53389E;">
+
+  <div class="center-wrap">
+
+    <!-- Logo + Text Wrapper -->
+    <div class="logo-text">
+      <img src="{{ url_for('static', filename='images/eduspine_logo.png') }}"
+           alt="EDULOG Logo"
+           class="logo">
+      <h1 id="typewriter"></h1>
+    </div>
+
+  </div>
+
+  <script>
+    const text = "EDULOG";
+    const totalTime = 1500; // adjust if needed
+    const speed = totalTime / text.length;
+
+    let i = 0;
+    function typeWriter() {
+      if (i < text.length) {
+        document.getElementById("typewriter").innerHTML += text.charAt(i);
+        i++;
+        setTimeout(typeWriter, speed);
+      } else {
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 800);
+      }
+    }
+
+    typeWriter();
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,56 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="glass-panel" style="max-width:800px; margin:0 auto;">
+    <h2 style="text-align:center;">📝 Log Meeting</h2>
+    <form action="{{ url_for('log_meeting') }}" method="POST">
+        <div class="grid-2">
+            <div><label>Date</label><input type="date" name="Date_of_Meeting" required></div>
+            <div><label>Dept</label><select name="Department" required><option value="" disabled selected>Select...</option>{% for d in depts %}<option value="{{ d.name }}">{{ d.name }}</option>{% endfor %}</select></div>
+        </div>
+        <div class="grid-2">
+            <div><label>Head</label><select name="Department_Head">{% for h in dept_heads %}<option value="{{ h.full_name }}">{{ h.full_name }}</option>{% endfor %}</select></div>
+            <div><label>Mode</label><select name="Meeting_Mode"><option>Offline</option><option>Online</option><option>Hybrid</option></select></div>
+        </div>
+        <label>Objective</label><input type="text" name="Objective" required>
+        <label>Key Decisions</label><textarea name="Key_Decisions"></textarea>
+        <label>Action Items</label><textarea name="Action_Items"></textarea>
+
+        <div class="grid-2">
+            <div style="background:rgba(0,0,0,0.2); padding:10px; border-radius:8px; display:flex; flex-direction:column;">
+                <div style="border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:10px; margin-bottom:10px; display:flex; align-items:center;">
+                    <input type="checkbox" onclick="toggle(this, 'Attendees')" style="width:auto; margin:0 10px 0 0;"> 
+                    <label style="color:#00e676; font-weight:bold; cursor:pointer; margin:0;">Select All Attendees</label>
+                </div>
+                <div style="max-height:150px; overflow-y:scroll;">
+                    {% for s in staff_list %}
+                    <div style="margin-bottom:5px; display:flex; align-items:center;">
+                        <input type="checkbox" name="Attendees" value="{{ s.full_name }}" style="width:auto; margin-right:10px;"> {{ s.full_name }}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div style="background:rgba(0,0,0,0.2); padding:10px; border-radius:8px; display:flex; flex-direction:column;">
+                <div style="border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:10px; margin-bottom:10px; display:flex; align-items:center;">
+                    <input type="checkbox" onclick="toggle(this, 'Absentees')" style="width:auto; margin:0 10px 0 0;"> 
+                    <label style="color:#ff5252; font-weight:bold; cursor:pointer; margin:0;">Select All Absentees</label>
+                </div>
+                <div style="max-height:150px; overflow-y:scroll;">
+                    {% for s in staff_list %}
+                    <div style="margin-bottom:5px; display:flex; align-items:center;">
+                        <input type="checkbox" name="Absentees" value="{{ s.full_name }}" style="width:auto; margin-right:10px;"> {{ s.full_name }}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <script>function toggle(source, name) { checkboxes = document.getElementsByName(name); for(var i=0, n=checkboxes.length;i<n;i++) { checkboxes[i].checked = source.checked; } }</script>
+
+        <div class="grid-2">
+            <div><label>Productive?</label><select name="Productive"><option>Yes</option><option>No</option></select></div>
+            <div><label>Submitted By</label><input type="text" name="Submitted_By" value="{{ user.full_name }}" readonly></div>
+        </div>
+        <button type="submit" class="submit-btn" style="margin-top:20px;">Log Meeting</button>
+    </form>
+</div>
+{% endblock %}

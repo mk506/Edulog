@@ -1,0 +1,7 @@
+﻿flask
+flask-sqlalchemy
+flask-login
+flask-bcrypt
+pandas
+openpyxl
+psycopg2-binary

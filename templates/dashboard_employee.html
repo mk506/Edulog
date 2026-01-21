@@ -1,0 +1,47 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="dashboard-header"><h2>👋 Hello, {{ user.full_name }}</h2></div>
+
+<div class="kpi-grid">
+    <div class="card" style="border-top: 4px solid #00e676;">
+        <h3>Attended</h3>
+        <p class="big-number">{{ stats.attended }}</p>
+        <small>Meetings Present</small>
+    </div>
+    <div class="card" style="border-top: 4px solid #ff5252;">
+        <h3>Missed</h3>
+        <p class="big-number">{{ stats.missed }}</p>
+        <small>Listed as Absent</small>
+    </div>
+    <div class="card" style="border-top: 4px solid #2196f3;">
+        <h3>Pending Tasks</h3>
+        <p class="big-number">{{ tasks|length }}</p>
+    </div>
+</div>
+
+<div class="grid-2">
+    <div class="glass-panel" style="border-top:4px solid #ffd700;">
+        <h3>🗓️ Upcoming Schedule</h3>
+        {% for s in schedules %}
+        <div style="background:rgba(255,255,255,0.1); padding:10px; border-radius:8px; margin-bottom:10px;">
+            <div style="display:flex; justify-content:space-between;">
+                <strong>{{ s.title }}</strong>
+                <span style="font-size:0.8rem; background:#6a11cb; padding:2px 5px; border-radius:4px;">{{ s.mode }}</span>
+            </div>
+            <small>📅 {{ s.date }} @ {{ s.time }} | By: {{ s.created_by }}</small>
+        </div>
+        {% else %}<p>No meetings scheduled.</p>{% endfor %}
+    </div>
+
+    <div class="glass-panel">
+        <h3>📝 My To-Do List</h3>
+        {% for t in tasks if t.status != 'Completed' %}
+        <div style="background:rgba(255,255,255,0.1); padding:10px; border-radius:8px; margin-bottom:10px; border-left:4px solid #2196f3;">
+            <strong>{{ t.title }}</strong>
+            <p style="font-size:0.8rem; margin:5px 0;">Due: {{ t.deadline }}</p>
+            <a href="{{ url_for('update_status', id=t.id, new_status='Completed') }}" class="btn-sm" style="background:#00e676; color:black;">Mark Done</a>
+        </div>
+        {% else %}<p>No tasks pending.</p>{% endfor %}
+    </div>
+</div>
+{% endblock %}

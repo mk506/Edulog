@@ -1,0 +1,105 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="dashboard-header"><h2>👮‍♂️ Leader Dashboard: {{ user.department }}</h2></div>
+
+<div class="grid-2">
+    <div class="glass-panel" style="display:flex; align-items:center; justify-content:space-between;">
+        <div>
+            <h3>Team Performance</h3>
+            <h1 style="font-size:3rem; color:#00e676; margin:0;">{{ analytics.rate }}%</h1>
+            <p style="opacity:0.7;">Task Completion</p>
+            <h4 style="margin:5px 0;">{{ analytics.total }} Tasks Assigned</h4>
+        </div>
+        <div style="width:120px; height:120px;">
+            <canvas id="leaderChart"></canvas>
+        </div>
+    </div>
+
+    <div class="glass-panel">
+        <h3>📅 Schedule Dept Meeting</h3>
+        <form action="{{ url_for('schedule_meeting') }}" method="POST">
+            <input type="text" name="title" placeholder="Meeting Title" required style="margin-bottom:5px;">
+            <div class="grid-2">
+                <select name="target_dept" style="flex:1;">
+                    <option value="{{ user.department }}">My Dept Only</option>
+                    <option value="All">All Departments</option>
+                    {% for d in depts %}<option value="{{ d.name }}">{{ d.name }}</option>{% endfor %}
+                </select>
+                <select name="mode" style="width:100px;"><option>Online</option><option>Offline</option><option>Hybrid</option></select>
+            </div>
+            <div style="display:flex; gap:10px; margin-top:5px;">
+                <input type="date" name="date" required>
+                <input type="time" name="time" required>
+            </div>
+            <button type="submit" class="submit-btn" style="margin-top:10px;">Schedule & Notify</button>
+        </form>
+    </div>
+</div>
+
+<div class="glass-panel" style="margin-top:20px;">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3>📋 Tasks I Assigned to My Team</h3>
+        <form action="{{ url_for('clear_leader_tasks') }}" method="POST">
+            <button type="submit" class="btn-sm" style="background:#ff5252; color:white;" onclick="return confirm('Clear ALL tasks you assigned?');">Clear All</button>
+        </form>
+    </div>
+    
+    <form action="{{ url_for('assign_task') }}" method="POST" style="background:rgba(255,255,255,0.05); padding:15px; border-radius:10px; margin-bottom:15px; display:flex; gap:10px;">
+        <input type="text" name="title" placeholder="New Task..." required style="margin:0;">
+        <select name="assignee" style="margin:0;">{% for s in staff %}<option value="{{ s.username }}">{{ s.full_name }}</option>{% endfor %}</select>
+        <input type="date" name="deadline" required style="width:150px; margin:0;">
+        <button type="submit" class="btn-sm" style="background:#2575fc; color:white; width:100px;">Assign</button>
+    </form>
+
+    <table class="data-table">
+        <thead><tr><th>Task</th><th>Assigned To</th><th>Status</th><th>Delete</th></tr></thead>
+        <tbody>
+            {% for t in assigned_tasks %}
+            <tr>
+                <td>{{ t.title }}</td>
+                <td>{{ t.assignee }}</td>
+                <td>
+                    <span style="padding:2px 6px; border-radius:4px; font-size:0.8rem; background:{% if t.status=='Completed' %}#00e676{% else %}#ffd700{% endif %}; color:black;">
+                        {{ t.status }}
+                    </span>
+                </td>
+                <td><form action="{{ url_for('delete_task', id=t.id) }}" method="POST"><button type="submit" class="btn-sm" style="background:#ff5252;">🗑️</button></form></td>
+            </tr>
+            {% else %}<tr><td colspan="4">No tasks assigned.</td></tr>{% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="glass-panel" style="border-left:5px solid #ffd700; margin-top:20px;">
+    <h3>📥 Tasks Assigned TO Me</h3>
+    <table class="data-table">
+        <thead><tr><th>Task</th><th>From</th><th>Due</th><th>Status</th><th>Action</th></tr></thead>
+        <tbody>
+            {% for t in my_tasks %}
+            <tr>
+                <td>{{ t.title }}</td>
+                <td>{{ t.assigner }}</td>
+                <td>{{ t.deadline }}</td>
+                <td>{{ t.status }}</td>
+                <td><a href="{{ url_for('update_status', id=t.id, new_status='Completed') }}" class="btn-sm" style="background:#00e676; color:black;">Done</a></td>
+            </tr>
+            {% else %}<tr><td colspan="5">No tasks for you.</td></tr>{% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    new Chart(document.getElementById('leaderChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Done', 'Pending'],
+            datasets: [{
+                data: [{{ analytics.rate }}, {{ 100 - analytics.rate }}],
+                backgroundColor: ['#00e676', 'rgba(255,255,255,0.1)'],
+                borderWidth: 0
+            }]
+        },
+        options: { cutout: '70%', plugins: { legend: { display: false } } }
+    });
+</script>
+{% endblock %}

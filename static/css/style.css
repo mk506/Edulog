@@ -1,0 +1,204 @@
+﻿:root {
+    --bg-color: #0f0c29;
+    --glass-bg: rgba(255, 255, 255, 0.08);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --primary: #6a11cb;
+    --secondary: #2575fc;
+    --accent: #ffd700;
+    --text: #ffffff;
+    --danger: #ff5252;
+    --success: #00e676;
+    --input-bg: rgba(0, 0, 0, 0.3);
+}
+
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    color: var(--text);
+    min-height: 100vh;
+}
+
+@keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+/* 3D ANIMATION */
+.background-3d { position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: -1; }
+.cube { position: absolute; width: 20px; height: 20px; background: rgba(255, 255, 255, 0.1); animation: animate 25s linear infinite; bottom: -150px; }
+@keyframes animate { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(-1000px) rotate(720deg); opacity: 0; } }
+.cube:nth-child(1) { left: 25%; width: 80px; height: 80px; animation-delay: 0s; }
+.cube:nth-child(2) { left: 10%; width: 20px; height: 20px; animation-delay: 2s; }
+.cube:nth-child(3) { left: 70%; width: 20px; height: 20px; animation-delay: 4s; }
+
+/* SEAMLESS LOGO BRANDING */
+.branding {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Space between logo and text */
+}
+.brand-logo {
+    height: 55px; /* Perfect height for navbar */
+    width: auto;
+    object-fit: contain;
+    /* Optional: If your logo has a white background, this multiplies it to blend (try it!) */
+    /* mix-blend-mode: screen; */ 
+}
+.brand-text {
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: white;
+    text-transform: uppercase;
+}
+
+/* NAVBAR */
+.glass-nav { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 15px 30px; 
+    background: rgba(255,255,255,0.05); 
+    backdrop-filter: blur(15px); 
+    border-bottom: 1px solid rgba(255,255,255,0.1); 
+    flex-wrap: wrap;
+}
+.nav-links { display: flex; align-items: center; gap: 20px; }
+.nav-links a { color: white; text-decoration: none; font-weight: 500; transition: 0.3s; }
+.nav-links a:hover { color: var(--accent); }
+
+/* NOTIFICATIONS */
+.notification-bell { display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; width: 40px; height: 40px; font-size: 1.4rem; }
+.notification-count { position: absolute; top: 5px; right: 5px; background: #ff5252; color: white; font-size: 10px; padding: 2px 5px; border-radius: 50%; }
+.notification-dropdown { display: none; position: absolute; top: 50px; right: 0; background: #1a1a2e; border: 1px solid #4cc9f0; padding: 10px; width: 280px; z-index: 1000; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+.notification-bell:hover .notification-dropdown { display: block; }
+.notification-dropdown p { border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; color: #ffae00; font-size: 0.85rem; margin: 5px 0; }
+
+/* TOAST */
+.toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; }
+.toast { background: rgba(0, 230, 118, 0.9); color: black; padding: 15px 25px; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: slideIn 0.5s, fadeOut 0.5s 3s forwards; opacity: 0; }
+@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; display: none; } }
+
+/* UTILS */
+.container { max-width: 1200px; margin: 40px auto; padding: 20px; }
+.glass-panel { background: var(--glass-bg); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 25px; margin-bottom: 20px; color: white; transition: transform 0.3s; }
+.glass-panel:hover { transform: translateY(-3px); }
+.submit-btn { background: linear-gradient(90deg, var(--primary), var(--secondary)); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; transition: 0.3s; }
+.submit-btn:hover { box-shadow: 0 0 15px var(--secondary); transform: scale(1.02); }
+input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; background: var(--input-bg); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 6px; }
+input:focus { border-color: var(--accent); outline: none; }
+option { background: #0f0c29; }
+.data-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+.data-table th { text-align: left; padding: 12px; border-bottom: 2px solid rgba(255,255,255,0.2); color: var(--accent); }
+.data-table td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.btn-sm { padding: 5px 10px; border-radius: 4px; text-decoration: none; cursor: pointer; border: none; font-size: 0.8rem; }
+
+
+#typewriter {
+  font-size: clamp(100px, 18vw, 160px);
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 10px;
+  text-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  white-space: nowrap;
+  overflow: hidden;
+  border-right: 4px solid rgba(255,255,255,0.9);
+  animation: blinkCursor 0.9s infinite;
+}
+
+/* Cursor blink */
+@keyframes blinkCursor {
+  0% { border-color: rgba(255,255,255,0.9); }
+  50% { border-color: transparent; }
+  100% { border-color: rgba(255,255,255,0.9); }
+}
+/* Executive Panel */
+.executive-panel {
+  background: var(--glass-bg); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 25px; margin-bottom: 20px; color: white; transition: transform 0.3s; 
+  text-align: center;
+
+}
+
+
+
+/* Buttons */
+.analytics-btn {
+    background: white;
+    color: #53389E;
+    padding: 10px 20px;
+}
+
+.delete-btn {
+    background: #ff5252;
+    color: white;
+}
+
+/* Stats */
+.stats-row {
+    display: flex;
+    justify-content: space-around;
+}
+
+.stat-box {
+    text-align: center;
+    color: #FFFFFF;
+}
+
+.pending-text {
+    color: #FFC107;
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: black;
+}
+
+.status-completed {
+    background: #FFFFFF;
+}
+
+.status-pending {
+    background: #FFC107;
+}
+
+/* Assign Form */
+.assign-form {
+    display: flex;
+    gap: 10px;
+}
+/* Wrapper stays centered on page */
+.center-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Stack logo and text */
+.logo-text {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;   /* horizontal centering */
+}
+
+/* Lock logo position so text typing doesn't affect it */
+.logo {
+    display: block;
+    margin-bottom: 20px;
+}
+
+/* Reserve fixed space for typewriter text */
+#typewriter {
+    min-height: 1.2em;     /* prevents layout jump */
+    text-align: center;
+    color: white;
+}
+
+
+
+

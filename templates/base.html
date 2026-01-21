@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduLog Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="background-3d"><li class="cube"></li><li class="cube"></li><li class="cube"></li><li class="cube"></li><li class="cube"></li></div>
+
+    <div class="toast-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="toast" style="{% if category=='danger' %}background:#ff5252; color:white;{% endif %}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+    </div>
+
+    {% if current_user.is_authenticated %}
+    <nav class="glass-nav">
+        <div class="branding">
+            <img src="{{ url_for('static', filename='images/eduspine_logo.png') }}" class="brand-logo" alt="Logo">
+            <div class="brand-text">EduLog <span style="color:#ffd700; font-size:1rem; vertical-align:middle;">PRO</span></div>
+        </div>
+
+        <div class="nav-links">
+            <div class="notification-bell" onclick="document.getElementById('notif-dropdown').classList.toggle('show')">
+                🔔
+                {% if notifications %}
+                <span class="notification-count">{{ notifications|length }}</span>
+                <div class="notification-dropdown" id="notif-dropdown">
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:5px;">
+                        <strong style="color:white;">Alerts</strong>
+                        <a href="{{ url_for('clear_notifications') }}" style="color:#ff5252; font-size:0.7rem; text-decoration:none; margin:0;">Clear</a>
+                    </div>
+                    {% for n in notifications %}<p>{{ n }}</p>{% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            {% if current_user.role == 'Admin' %}
+                <a href="{{ url_for('admin_dashboard') }}">Analytics</a>
+                <a href="{{ url_for('manage_staff') }}">Team</a>
+                <a href="{{ url_for('leader_dashboard') }}">Leader View</a>
+            {% elif current_user.role == 'Leader' %}
+                <a href="{{ url_for('leader_dashboard') }}">Dashboard</a>
+            {% else %}
+                <a href="{{ url_for('employee_dashboard') }}">My Dashboard</a>
+            {% endif %}
+            <a href="{{ url_for('log_meeting') }}">Log Meeting</a>
+            <a href="{{ url_for('settings') }}">Settings</a>
+            <a href="{{ url_for('logout') }}" style="color:#ff5252;">Logout</a>
+        </div>
+    </nav>
+    {% endif %}
+
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

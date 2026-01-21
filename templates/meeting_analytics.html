@@ -1,0 +1,127 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="dashboard-header">
+    <h2>📊 Meeting Analytics Hub</h2>
+    <p>Detailed breakdown of meeting efficiency, attendance, and logs.</p>
+</div>
+
+<div class="glass-panel filter-bar">
+    <form method="GET" action="{{ url_for('meeting_analytics') }}" style="display:flex; gap:15px; width:100%; align-items:flex-end;">
+        <div style="flex:1;">
+            <label>Department</label>
+            <select name="dept">
+                <option value="All">All Departments</option>
+                {% for d in depts %}<option value="{{ d.name }}">{{ d.name }}</option>{% endfor %}
+            </select>
+        </div>
+        <div style="flex:1;">
+            <label>Month (YYYY-MM)</label>
+            <input type="month" name="month">
+        </div>
+        <button type="submit" class="submit-btn" style="width:auto;">Filter</button>
+        <button type="submit" formaction="{{ url_for('export_analytics') }}" class="btn-sm" style="height:46px; background:white; color:#6a11cb; font-weight:bold; margin-bottom:2px;">📥 Export Excel</button>
+    </form>
+</div>
+
+<div class="kpi-grid">
+    <div class="card" style="border-top:4px solid #4cc9f0;">
+        <h3>Total Logs</h3>
+        <p class="big-number">{{ kpi.total }}</p>
+    </div>
+    <div class="card" style="border-top:4px solid #f72585;">
+        <h3>Efficiency</h3>
+        <p class="big-number">{{ kpi.efficiency }}%</p>
+    </div>
+    <div class="card" style="border-top:4px solid #00e676;">
+        <h3>Best Attendance</h3>
+        <p class="big-number" style="font-size:1.2rem;">{{ kpi.best_att }}</p>
+    </div>
+</div>
+
+<div class="grid-2">
+    <div class="glass-panel"><h3>Logs per Department</h3><canvas id="deptChart"></canvas></div>
+    <div class="glass-panel"><h3>Absentees Trend</h3><canvas id="absentChart"></canvas></div>
+</div>
+
+<div class="glass-panel" style="margin-top:20px;">
+    <h3>Detailed Meeting Registry</h3>
+    <table class="data-table">
+        <thead><tr><th>Date</th><th>Dept</th><th>Objective</th><th>Filed By</th><th>Actions</th></tr></thead>
+        <tbody>
+            {% for m in meetings %}
+            <tr>
+                <td>{{ m.date_of_meeting }}</td>
+                <td>{{ m.department }}</td>
+                <td>{{ m.objective }}</td>
+                <td>{{ m.submitted_by }}</td>
+                <td>
+                    <button class="btn-sm" style="background:#2196f3; color:white; border:none;" 
+                            onclick="showDetails(
+                                '{{ m.date_of_meeting }}', '{{ m.department }}', '{{ m.objective }}', 
+                                '{{ m.key_decisions | replace('\n', '<br>') | replace('\'', '\\\'') }}', 
+                                '{{ m.action_items | replace('\n', '<br>') | replace('\'', '\\\'') }}', 
+                                '{{ m.attendees }}', '{{ m.absentees }}', '{{ m.productivity_reason }}'
+                            )">
+                        👁️ View Full
+                    </button>
+                </td>
+            </tr>
+            {% else %}<tr><td colspan="5">No meetings found.</td></tr>{% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div id="meetingModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; justify-content:center; align-items:center;">
+    <div style="background:white; color:#333; padding:30px; border-radius:10px; width:600px; max-width:90%; max-height:90vh; overflow-y:auto; position:relative;">
+        <span onclick="document.getElementById('meetingModal').style.display='none'" style="position:absolute; top:15px; right:20px; font-size:1.5rem; cursor:pointer; color:#ff5252;">&times;</span>
+        <h2 id="mObjective" style="margin-top:0; color:#6a11cb;">Objective</h2>
+        <p><strong>Date:</strong> <span id="mDate"></span> | <strong>Dept:</strong> <span id="mDept"></span></p>
+        <hr style="border:0; border-top:1px solid #eee;">
+        
+        <h4 style="margin-bottom:5px;">🔑 Key Decisions</h4>
+        <div id="mDecisions" style="background:#f9f9f9; padding:10px; border-radius:5px;"></div>
+        
+        <h4 style="margin-bottom:5px;">✅ Action Items</h4>
+        <div id="mActions" style="background:#f9f9f9; padding:10px; border-radius:5px;"></div>
+
+        <div class="grid-2" style="margin-top:15px;">
+            <div>
+                <h4>👥 Attendees</h4>
+                <p id="mAttendees" style="font-size:0.9rem; color:#00e676;"></p>
+            </div>
+            <div>
+                <h4>🚫 Absentees</h4>
+                <p id="mAbsentees" style="font-size:0.9rem; color:#ff5252;"></p>
+            </div>
+        </div>
+        
+        <h4>📉 Productivity Notes</h4>
+        <p id="mReason" style="font-size:0.9rem;"></p>
+
+        <button onclick="document.getElementById('meetingModal').style.display='none'" class="submit-btn" style="margin-top:20px;">Close</button>
+    </div>
+</div>
+
+<script>
+    function showDetails(date, dept, obj, decisions, actions, attendees, absentees, reason) {
+        document.getElementById('mDate').innerText = date;
+        document.getElementById('mDept').innerText = dept;
+        document.getElementById('mObjective').innerText = obj;
+        document.getElementById('mDecisions').innerHTML = decisions || 'None';
+        document.getElementById('mActions').innerHTML = actions || 'None';
+        document.getElementById('mAttendees').innerText = attendees || 'None';
+        document.getElementById('mAbsentees').innerText = absentees || 'None';
+        document.getElementById('mReason').innerText = reason || 'No notes.';
+        document.getElementById('meetingModal').style.display = 'flex';
+    }
+
+    new Chart(document.getElementById('deptChart'), {
+        type: 'bar',
+        data: { labels: {{ dept_labels | tojson }}, datasets: [{ label: 'Logs', data: {{ dept_values | tojson }}, backgroundColor: '#4cc9f0' }] }
+    });
+    new Chart(document.getElementById('absentChart'), {
+        type: 'line',
+        data: { labels: {{ absent_labels | tojson }}, datasets: [{ label: 'Absentees', data: {{ absent_values | tojson }}, borderColor: '#ff5252', fill: false }] }
+    });
+</script>
+{% endblock %}

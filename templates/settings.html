@@ -1,0 +1,12 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="glass-panel slide-in" style="max-width:500px; margin:auto;">
+    <h2>Account Settings</h2>
+    <p>Logged in as: <strong>{{ user.username }}</strong></p>
+    <form method="POST">
+        <label>Change Password</label>
+        <input type="password" name="new_password" placeholder="New Password" required>
+        <button type="submit" class="submit-btn" style="margin-top:20px;">Update Password</button>
+    </form>
+</div>
+{% endblock %}

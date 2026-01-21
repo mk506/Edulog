@@ -1,0 +1,89 @@
+﻿{% extends "base.html" %}
+{% block content %}
+
+<div class="glass-panel slide-in" style="max-width: 800px; margin: auto; border: 2px solid rgba(255,255,255,0.2);">
+    
+    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid white; padding-bottom:20px; margin-bottom:20px;">
+        <div>
+            <h1 style="margin:0; font-size:2rem; letter-spacing:2px;">OFFICIAL RECORD</h1>
+            <p style="margin:5px 0 0 0; opacity:0.8;">EduLog Submission #{{ meeting.id }}</p>
+        </div>
+        <div style="text-align:right;">
+            <div class="status-badge {{ 'success' if meeting.productive == 'Yes' else 'warn' }}">
+                {{ meeting.productive.upper() }}
+            </div>
+            <p>{{ meeting.date_of_meeting }}</p>
+        </div>
+    </div>
+
+    <div class="info-grid">
+        <div class="info-box">
+            <small>DEPARTMENT</small>
+            <h3>{{ meeting.department }}</h3>
+        </div>
+        <div class="info-box">
+            <small>DEPT HEAD</small>
+            <h3>{{ meeting.department_head }}</h3>
+        </div>
+        <div class="info-box">
+            <small>MODE</small>
+            <h3>{{ meeting.mode }}</h3>
+        </div>
+        <div class="info-box">
+            <small>SUBMITTED BY</small>
+            <h3>{{ meeting.submitted_by }}</h3>
+        </div>
+    </div>
+
+    <div class="content-block">
+        <h4 class="block-title">🎯 Objective</h4>
+        <p>{{ meeting.objective }}</p>
+    </div>
+
+    <div class="content-block">
+        <h4 class="block-title">💡 Key Decisions</h4>
+        <p>{{ meeting.key_decisions }}</p>
+    </div>
+
+    <div class="grid-2" style="margin-top:20px;">
+        <div class="content-block green-theme">
+            <h4 class="block-title">✅ Attendees</h4>
+            <p>{{ meeting.attendees }}</p>
+        </div>
+        <div class="content-block red-theme">
+            <h4 class="block-title">❌ Absentees</h4>
+            <p>{{ meeting.absentees }}</p>
+        </div>
+    </div>
+
+    {% if meeting.productivity_reason %}
+    <div class="content-block warn-theme">
+        <h4 class="block-title">⚠️ Productivity Note</h4>
+        <p>{{ meeting.productivity_reason }}</p>
+    </div>
+    {% endif %}
+
+    <div style="margin-top:30px; display:flex; gap:15px;">
+        <button onclick="window.print()" class="submit-btn" style="flex:1; background:#4cc9f0; color:#000;">🖨️ Print Sheet</button>
+        <a href="{{ url_for('admin_dashboard') }}" class="submit-btn" style="flex:1; text-align:center; text-decoration:none; background:#ff5252; color:#fff;">Close</a>
+    </div>
+
+</div>
+
+<style>
+    .info-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 25px; }
+    .info-box { background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; text-align: center; }
+    .info-box small { font-size: 0.7rem; letter-spacing: 1px; opacity: 0.7; }
+    .info-box h3 { margin: 5px 0 0 0; font-size: 0.9rem; }
+    
+    .content-block { background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; margin-bottom: 15px; border-left: 4px solid #fff; }
+    .block-title { margin: 0 0 10px 0; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9; }
+    
+    .green-theme { border-left-color: #00e676; background: rgba(0, 230, 118, 0.1); }
+    .red-theme { border-left-color: #ff5252; background: rgba(255, 82, 82, 0.1); }
+    
+    .status-badge { display: inline-block; padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 1.2rem; }
+    .success { background: #00e676; color: #000; box-shadow: 0 0 15px #00e676; }
+    .warn { background: #ff5252; color: #fff; box-shadow: 0 0 15px #ff5252; }
+</style>
+{% endblock %}
