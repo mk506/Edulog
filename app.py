@@ -1,4 +1,4 @@
-﻿import os
+import os
 from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, send_file, flash, abort, session
 from flask_sqlalchemy import SQLAlchemy
@@ -320,6 +320,20 @@ def settings():
 def clear_data():
     db.session.query(Meeting).delete(); db.session.commit()
     return redirect(url_for('admin_dashboard'))
+
+# --- DATABASE INITIALIZATION ROUTE ---
+@app.route('/init_db')
+def init_db_route():
+    with app.app_context():
+        db.create_all()
+        # Create a default Admin user if none exists
+        if not User.query.filter_by(username='admin').first():
+            hashed_pw = bcrypt.generate_password_hash('admin123').decode('utf-8')
+            admin = User(username='admin', password_hash=hashed_pw, full_name='System Admin', role='Admin', department='IT', designation='Manager')
+            db.session.add(admin)
+            db.session.commit()
+            return "Database initialized and Admin user created! (Username: admin, Password: admin123)"
+    return "Database tables already exist."
 
 def init_db():
     with app.app_context(): db.create_all()
